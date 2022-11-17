@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- mybatis SQL 매핑 파일을 뜻하는 지시문 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bitc.board2.mapper.BoardMapper">
+    <select id="selectBoardList" resultType="com.bitc.board2.dto.BoardDto">
+        SELECT
+            idx, title, user_id, hit_cnt,
+            DATE_FORMAT(create_dt, '%Y.%m.%d %H:%i:%s') AS create_dt
+        FROM
+            t_board
+        WHERE
+            deleted_yn = 'N'
+        ORDER BY
+            idx DESC
+    </select>
+
+    <insert id="insertBoard" parameterType="com.bitc.board2.dto.BoardDto">
+        INSERT INTO t_board
+            (title, contents, user_id, pwd, create_dt)
+        VALUES
+            (#{title}, #{contents}, #{userId}, #{pwd}, NOW())
+    </insert>
+
+    <select id="selectBoardDetail" parameterType="int" resultType="com.bitc.board2.dto.BoardDto">
+        SELECT
+            idx, title, contents, user_id, hit_cnt,
+            DATE_FORMAT(create_dt, '%Y.%m.%d %H:%i:%s') AS create_dt,
+            DATE_FORMAT(update_dt, '%Y.%m.%d %H:%i:%s') AS update_dt
+        FROM
+            t_board
+        WHERE
+            idx = #{idx}
+    </select>
+
+    <update id="updateBoard" parameterType="com.bitc.board2.dto.BoardDto">
+        UPDATE
+            t_board
+        SET
+            title = #{title}, contents = #{contents}, update_dt = NOW()
+        WHERE
+            idx = #{idx}
+    </update>
+
+    <update id="deleteBoard" parameterType="int">
+        UPDATE t_board
+        SET deleted_yn = 'Y'
+        WHERE idx = #{idx}
+    </update>
+</mapper>
